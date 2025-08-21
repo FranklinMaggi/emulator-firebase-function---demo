@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Profilo utente
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Banca quiz - sola lettura a utenti autenticati
+    match /quiz_bank/{qid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.role in ['admin']; // solo admin
+    }
+
+    // Tentativi quiz: ciascuno gestisce i propri
+    match /quiz_attempts/{attemptId} {
+      allow read, write: if request.auth != null
+        && request.resource.data.userId == request.auth.uid; // in create/update
+    }
+
+    // Autoscuole (visibili solo a ruoli alti)
+    match /autoscuole/{aid} {
+      allow read: if request.auth != null
+        && (request.auth.token.role in ['admin','autoscuola'])
+        && (request.auth.token.autoscuolaId == aid || request.auth.token.role == 'admin');
+
+      allow write: if request.auth != null
+        && request.auth.token.role in ['admin','autoscuola']
+        && (request.auth.token.autoscuolaId == aid || request.auth.token.role == 'admin');
+    }
+
+    // Studenti dentro l'autoscuola (opzione A: annidati sotto autoscuola)
+    match /autoscuole/{aid}/studenti/{sid} {
+      allow read, write: if request.auth != null && (
+        request.auth.uid == sid // lo studente su se stesso
+        || (request.auth.token.role in ['admin','autoscuola','prof']
+            && request.auth.token.autoscuolaId == aid) // prof/autoscuola della stessa autoscuola
+      );
+    }
+
+    // Registro lezioni (prof + studenti della stessa autoscuola)
+    match /lesson_log/{lid} {
+      allow read: if request.auth != null
+        && request.auth.token.autoscuolaId == resource.data.autoscuolaId;
+      allow write: if request.auth != null
+        && request.auth.token.role in ['admin','autoscuola','prof']
+        && request.auth.token.autoscuolaId == request.resource.data.autoscuolaId;
+    }
+
+    // Sessioni esame
+    match /exam_sessions/{eid} {
+      allow read: if request.auth != null
+        && request.auth.token.autoscuolaId == resource.data.autoscuolaId;
+      allow write: if request.auth != null
+        && request.auth.token.role in ['admin','autoscuola']
+        && request.auth.token.autoscuolaId == request.resource.data.autoscuolaId;
+    }
+
+    // Codici esame (claim/riscatto gestiti via Function)
+    match /exam_codes/{codeId} {
+      allow read: if request.auth != null
+        && request.auth.token.autoscuolaId == resource.data.autoscuolaId;
+      allow write: if request.auth != null
+        && request.auth.token.role in ['admin','autoscuola']
+        && request.auth.token.autoscuolaId == request.resource.data.autoscuolaId;
+    }
+  }
+}
