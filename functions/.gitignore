@@ -1,2 +1,20 @@
+# Node
 node_modules/
-*.local
+npm-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+.DS_Store
+
+# Firebase emulator / logs
+firebase-debug.log
+firebase-debug.*.log
+**/database-debug.log
+**/firestore-debug.log
+
+# Functions build artifacts (se usi TS in futuro)
+functions/lib/
+functions/.runtimeconfig.json
+
+# Misc
+.env
+.env.*
