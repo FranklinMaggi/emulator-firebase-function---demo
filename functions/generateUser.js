@@ -10,12 +10,13 @@ const id = 'user_' + Date.now();
 const nome = faker.person.firstName();
 const cognome = faker.person.lastName();
 const telefono = faker.phone.number('+39 ### #######');
+const email = `${nome.toLowerCase()}.${cognome.toLowerCase()}${Math.floor(Math.random()*1000)}@mail.com`;
 
 
 const db = admin.firestore();
-await db.collection('users').doc(id).set({ id, nome, cognome, telefono });
+await db.collection('users').doc(id).set({ id, nome, cognome, telefono , email });
 
-res.json({ success: true, id, nome, cognome, telefono });
+res.json({ success: true, id, nome, cognome, telefono , email });
 } catch (error) {
 console.error('Errore generateUser:', error);
 
