@@ -1,27 +1,40 @@
-## 🚦 Riepilogo Funzionalità
+## 🚦 Riepilogo Funzionalità Firebase Demo
 
-- **Frontend:**  
-  - Pagina con campi utente (`ID`, `Nome`, `Cognome`, `Telefono`, `Email`) + pulsanti “Genera Utente” e “Autentica Utente”.
-  - JS aggiorna i campi chiamando le funzioni backend via HTTP.
-- **Backend (Firebase Functions):**  
-  - `generateUser`: genera e salva utente fake su Firestore.
-  - `createAuthUser`: crea lo stesso utente anche su Firebase Authentication.
-- **Emulatori locali:**  
-  - Tutto gira in locale senza bisogno di deploy.
+**Frontend**
+- Pagina web con campi utente (`ID`, `Nome`, `Cognome`, `Telefono`, `Email`)
+- Due pulsanti:
+  - **Genera Utente:** crea dati random e li salva su Firestore (via Cloud Function)
+  - **Autentica Utente:** crea lo stesso utente in Firebase Authentication (via Cloud Function)
+
+**Backend (Firebase Functions)**
+- `generateUser` (file: `functions/generateUser.js`):  
+  Genera utente fake con dati random, salva su Firestore, restituisce i dati al frontend.
+- `createAuthUser` (file: `functions/authentication.js`):  
+  Prende email/nome/cognome dal frontend, crea l’utente su Firebase Authentication con password random.
+- Entrambe le funzioni usano `firebase-admin` e non sono soggette alle regole di sicurezza Firestore/Auth.
+
+**Emulatori Firebase**
+- Tutto il progetto gira in locale usando gli emulatori Firebase (Firestore, Auth, Functions, Hosting, ecc.).
+- Verifica dati in [Emulator UI](http://localhost:5050/) (Firestore e Auth tab).
+
+---
 
 ## 🪛 Debug & Note
-- Le funzioni backend usano `admin`, quindi le regole di sicurezza non influenzano il flusso.
-- Se qualcosa non va: controllare console browser, terminale, nomi file JS.
+
+- Per problemi: controlla console browser e log terminale degli emulatori.
+- I nomi dei file JS vanno scritti corretti e senza typo.
+- Funzioni backend accessibili agli script frontend via fetch HTTP.
 
 ---
 
-## ⏭️ Next Steps
+## ⏭️ Next Steps (Prossimi Step)
 
-- Gestione errori su utente già esistente in Auth
-- Sincronizzazione UID tra Firestore e Auth (opzionale)
-- Possibilità di login reale (opzionale)
+- Gestire l’errore in caso di email già esistente su Authentication
+- Sincronizzare l’UID tra Firestore e Auth (opzionale)
+- Implementare login reale con Firebase Auth SDK (opzionale)
+- Aggiornare la documentazione nel README
 
 ---
 
-> **NB:** Per dettagli vedere file JS e Functions nelle rispettive cartelle.
+> Per dettagli consultare i file in `/functions` e `/public/js`.
 
