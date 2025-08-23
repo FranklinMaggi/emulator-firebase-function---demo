@@ -1,5 +1,7 @@
 // functions/index.js
 const { onRequest } = require('firebase-functions/v2/https');
+//creeremo un user con create user da functions/authenitcation.js
+const { createAuthUser } = require('./authentication');
 const logger = require('firebase-functions/logger');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -29,3 +31,4 @@ res.json(snapshot.docs.map(d => d.data()));
 
 
 exports.generateUser = generateUser;
+exports.createAuthUser = createAuthUser;
